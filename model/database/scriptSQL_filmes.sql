@@ -58,3 +58,5 @@ insert into tbl_classificacao(
     );
 desc tbl_classificacao;
 SELECT * FROM tbl_classificacao;
+
+

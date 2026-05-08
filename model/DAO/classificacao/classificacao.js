@@ -36,7 +36,44 @@ const  insetClassificacao = async function (classificacao){ // Função para ins
     }
 }
 
+const updateClassificacao = async function (classificacao){
+    try {
+        let sql = `UPDATE tbl_classificacao SET
+                   descricao_indicativa = '${classificacao.descricao_indicativa}',
+                   idade = '${classificacao.idade}'
+                   WHERE id = ${classificacao.id};  
+        `
+        let result = await knexConex.raw(sql)
+        
+        if(result){
+            return true
+        }else{
+            return false
+        }
+    } catch (error) {
+        
+    }
+}
+
+const selectByIdClassificacao = async function (id){
+
+    try {
+        let sql = `SELECT * FROM tbl_classificacao WHERE id = ${id};`
+        let result = await knexConex.raw(sql)
+
+            if(Array.isArray(result)){
+                  return result[0]  
+            }else{
+                return false
+            }
+    } catch (error) {
+        return false
+    }
+    
+}
+
 module.exports = {
     insetClassificacao,
+    selectByIdClassificacao
 }
 

@@ -39,6 +39,33 @@ const inserirNovaClassificacao = async function(classificacao,contentType) {
     }
 }
 
+const buscarClassificacao = async function(id){
+  let message = JSON.parse(JSON.stringify(configMessages))
+  
+  try {
+    if(id== undefined || id == '' || id == null || isNaN(id)){
+      message.ERROR_BAD_REQUEST.field = '[ID] Inválido'
+        return message.ERROR_BAD_REQUEST
+    }else{
+      let result = await classificacaoDAO.selectByIdClassificacao(id)
+      
+      if(result){
+        message.DEFAULT_MESSAGE.status =  message.SUCCESS_RESPONSE.status
+        message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
+        message.DEFAULT_MESSAGE.response.classificacao = result
+
+        return message.DEFAULT_MESSAGE //200
+      }else{
+        return message.ERROR_NOT_FOUND //404
+      }
+    }
+  } catch (error) {
+    return message.ERROR_INTERNAL_CONTROLER // 500 (Controler)
+  }
+}
+
+const atualizarFilme =async function(filme,id,contentType){}
+
 const validarDados = async function (classificacao){
   let message = JSON.parse(JSON.stringify(configMessages))
 
@@ -57,5 +84,6 @@ const validarDados = async function (classificacao){
 }
 
 module.exports={
-    inserirNovaClassificacao
+    inserirNovaClassificacao,
+    buscarClassificacao
 }

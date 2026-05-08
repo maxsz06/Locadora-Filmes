@@ -78,7 +78,7 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
  
  // End POINT de Classificação
 
- app.post('/v1/senai/locadora/classificacao/inserir', bodyParserJSON ,async function(request,response){
+ app.post('/v1/senai/locadora/classificacao/inserir', bodyParserJSON ,async function(request,response){ // Inserir nova classificação
 
   let dados = request.body
   let contentType = request.headers['content-type']
@@ -87,6 +87,14 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
   response.status(result.status_code)
   response.json(result)
  })
+
+ app.get('/v1/senai/locadora/classificacao/:id', async function(request,response) {
+  let id = request.params.id
+  let result = await controlerClassificacao.buscarClassificacao(id)
+  
+  response.status(result.status_code)
+  response.json(result)
+})
 
 
 //----------------------------------------------------------------------------------------------------------------------
