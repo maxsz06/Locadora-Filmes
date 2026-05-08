@@ -24,7 +24,6 @@ const inserirNovaClassificacao = async function(classificacao,contentType) {
                         message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status;
                         message.DEFAULT_MESSAGE.status_code = message.SUCCESS_CREATED_ITEM.status_code;
                         message.DEFAULT_MESSAGE.message = message.SUCCESS_CREATED_ITEM.message;
-                        message.DEFAULT_MESSAGE.response = filme
                     } else {
                         return message.ERROR_INTERNAL_SEVER_MODE; // 500
                     }
@@ -48,7 +47,7 @@ const validarDados = async function (classificacao){
     console.log("erro 1");
     return message.ERROR_BAD_REQUEST;
 
-  }else if(classificacao.idade == undefined || classificacao.idade == null || classificacao.idade == '' || isNaN(classificacao.idade) || classificacao.idade.length >3) {
+  }else if(classificacao.idade == undefined || classificacao.idade == null || classificacao.idade == '' || isNaN(classificacao.idade) || classificacao.idade.length > 3) {
     message.ERROR_BAD_REQUEST.field = "[Classificacao da idade] INVÁLIDA";
     console.log("erro 2");
     return message.ERROR_BAD_REQUEST;
