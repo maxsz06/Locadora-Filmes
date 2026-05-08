@@ -51,7 +51,7 @@ const updateClassificacao = async function (classificacao){
             return false
         }
     } catch (error) {
-        
+        return false
     }
 }
 
@@ -74,6 +74,7 @@ const selectByIdClassificacao = async function (id){
 
 module.exports = {
     insetClassificacao,
-    selectByIdClassificacao
+    selectByIdClassificacao,
+    updateClassificacao
 }
 

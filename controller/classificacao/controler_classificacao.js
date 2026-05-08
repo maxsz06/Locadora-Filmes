@@ -64,11 +64,47 @@ const buscarClassificacao = async function(id){
   }
 }
 
-const atualizarFilme =async function(filme,id,contentType){}
-
-const validarDados = async function (classificacao){
+const atualizarClassificacao = async function (classificacao,id,contentType) {
   let message = JSON.parse(JSON.stringify(configMessages))
+  try {
+    if(String(contentType).toLocaleUpperCase()=='APPLICATION/JSON'){
+      let resultID = await buscarClassificacao(id) // Buscando o id da classificação
 
+      if(resultID.status){
+        let validar = await validarDados(classificacao)
+        if(!validar){
+          classificacao.id=id
+
+          let result = await classificacaoDAO.updateClassificacao(classificacao)
+
+          if(result){
+            message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDETED_ITEM.status
+            message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDETED_ITEM.status_code
+            message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDETED_ITEM.message
+            message.DEFAULT_MESSAGE.response = classificacao
+
+            return message.DEFAULT_MESSAGE // 200 (Atualizado)
+          }else{
+            return message.ERROR_INTERNAL_SEVER_MODEL //500 (Model)
+          }
+        }else{
+          return validar //400
+        }
+      }else{
+        return resultID //400 ou 404 ou 500
+      }
+    }else{
+      return message.ERROR_CONTENT_TYPE //415 -> ERRO NO CONTENT TYPE
+    }
+  } catch (error) {
+    console.log(error)
+    return message.ERROR_INTERNAL_CONTROLER // 500 (controler)
+  }
+}
+
+  
+  const validarDados = async function (classificacao){
+    let message = JSON.parse(JSON.stringify(configMessages))
   if(classificacao.descricao_indicativa == undefined || classificacao.descricao_indicativa == null || classificacao.descricao_indicativa == '' || classificacao.descricao_indicativa > 45 ){
     message.ERROR_BAD_REQUEST.field = "[Descricao Indicativa] INVÁLIDA";
     console.log("erro 1");
@@ -85,5 +121,6 @@ const validarDados = async function (classificacao){
 
 module.exports={
     inserirNovaClassificacao,
-    buscarClassificacao
+    buscarClassificacao,
+    atualizarClassificacao
 }

@@ -91,11 +91,21 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
  app.get('/v1/senai/locadora/classificacao/:id', async function(request,response) {
   let id = request.params.id
   let result = await controlerClassificacao.buscarClassificacao(id)
-  
+
   response.status(result.status_code)
   response.json(result)
-})
+ })
 
+ app.put('/v1/senai/locadora/classificacao/atualizar/:id',bodyParserJSON,async function(request,response) {
+  let contentType = request.headers['content-type']
+  let id = request.params.id
+  let classificacao = request.body
+
+  let result = await controlerClassificacao.atualizarClassificacao(classificacao,id,contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+ })
 
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;

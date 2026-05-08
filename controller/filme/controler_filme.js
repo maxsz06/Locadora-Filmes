@@ -76,7 +76,7 @@ const atualizarFilme = async function (filme,id, contentType) {
              return message.ERROR_INTERNAL_SEVER_MODEL //500 (Model)
             }
           }else{
-            return validar //400
+            return validar //400  
           }  
       }else{
         console.log('teste')
@@ -91,8 +91,7 @@ const atualizarFilme = async function (filme,id, contentType) {
     console.log(error)
     return message.ERROR_INTERNAL_CONTROLER // 500 (controler)
   }
-
-};
+}
 
 //Função para retornar todos os filmes
 const listarFilme = async function () {

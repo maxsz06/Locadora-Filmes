@@ -54,8 +54,6 @@ const insertFilme = async function(filme){
     
 }
 
-
-
 //Funçao para Atualizar um filme existente na tabela
 const updateFilme = async function(filme){
     try { 
