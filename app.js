@@ -107,6 +107,21 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
   response.json(result)
  })
 
+ app.get('/v1/senai/locadora/listar/classificacao', async function(request,response) {
+  let result = await controlerClassificacao.listarClassificacao()
+
+    response.status(result.status_code)
+    response.json(result)
+ })
+
+ app.delete('/v1/senai/locadora/classificacao/delete/:id',async function (request,response) {
+  let id = request.params.id
+  let result = await controlerClassificacao.excluirClassificacao(id)
+
+  response.status(result.status_code)
+  response.json(result)
+ })
+
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {

@@ -72,9 +72,39 @@ const selectByIdClassificacao = async function (id){
     
 }
 
+const selectAllClassificacao = async function(){
+    try {
+     let sql = `SELECT * FROM tbl_classificacao AS des;`
+        let result = await knexConex.raw(sql)
+        if(Array.isArray(result)){
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+const deleteClassificacao = async function(id) {
+    try {
+        let sql = `delete from tbl_classificacao where id = ${id};`
+        let result = await knexConex.raw(sql)
+
+     if(result){
+         return result
+     }else{
+       return true
+     }
+    } catch (error) {
+        return false
+    }
+}
 module.exports = {
     insetClassificacao,
     selectByIdClassificacao,
-    updateClassificacao
+    updateClassificacao,
+    selectAllClassificacao,
+    deleteClassificacao
 }
 

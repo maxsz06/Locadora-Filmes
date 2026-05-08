@@ -101,9 +101,8 @@ const atualizarClassificacao = async function (classificacao,id,contentType) {
     return message.ERROR_INTERNAL_CONTROLER // 500 (controler)
   }
 }
-
   
-  const validarDados = async function (classificacao){
+const validarDados = async function (classificacao){
     let message = JSON.parse(JSON.stringify(configMessages))
   if(classificacao.descricao_indicativa == undefined || classificacao.descricao_indicativa == null || classificacao.descricao_indicativa == '' || classificacao.descricao_indicativa > 45 ){
     message.ERROR_BAD_REQUEST.field = "[Descricao Indicativa] INVÁLIDA";
@@ -119,8 +118,55 @@ const atualizarClassificacao = async function (classificacao,id,contentType) {
   }
 }
 
+const listarClassificacao = async function () {
+  let message = JSON.parse(JSON.stringify(configMessages))
+  try {
+    let result = await classificacaoDAO.selectAllClassificacao()
+
+    if(result){
+     if(result.length > 0){
+       message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
+       message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
+       message.DEFAULT_MESSAGE.response.count=result.length
+       message.DEFAULT_MESSAGE.response.classificacao = result
+
+       return message.DEFAULT_MESSAGE // 200 (Dados do filme)
+     }else{
+       return message.ERROR_NOT_FOUND // 404 
+     }
+   }else{
+    return message.ERROR_INTERNAL_SEVER_MODEL //500 (model)
+   }
+  } catch (error) {
+    return message.ERROR_INTERNAL_CONTROLER  // 500 (controler)
+  }
+}
+
+const excluirClassificacao = async function(id){
+  let message = JSON.parse(JSON.stringify(configMessages));
+  
+  try {
+    let resultBuscarID = await buscarClassificacao(id)
+
+    if(resultBuscarID.status){
+      let result  = await classificacaoDAO.deleteClassificacao(id)
+      if(result){
+        return message.SUCCESS_DELETED_ITEM //200 (Registro excluído)
+      }else{
+        return message.ERROR_INTERNAL_SEVER_MODEL // 500 (model)
+      }
+    }else{
+      return resultBuscarID //400 ou 404
+    }
+  } catch (error) {
+    console.log(error)
+    return message.ERROR_INTERNAL_CONTROLER; // 500 (Controller)
+  }
+}
 module.exports={
     inserirNovaClassificacao,
     buscarClassificacao,
-    atualizarClassificacao
+    atualizarClassificacao,
+    listarClassificacao,
+    excluirClassificacao
 }
