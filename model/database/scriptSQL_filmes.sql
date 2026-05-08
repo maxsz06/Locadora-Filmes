@@ -57,6 +57,12 @@ insert into tbl_classificacao(
     '12'
     );
 desc tbl_classificacao;
-SELECT * FROM tbl_classificacao;
+SELECT * FROM tbl_classificacao des;
 
+UPDATE tbl_classificacao SET
+    descricao_indicativa = 'teste',
+    idade = '20'
+WHERE id = 5;
+
+SELECT * FROM tbl_classificacao WHERE id = 1;
 
