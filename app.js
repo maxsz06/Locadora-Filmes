@@ -12,6 +12,7 @@ const bodyParser    = require('body-parser')
 
 const controlerFilme = require ('./controller/filme/controler_filme.js') // Controler FILME
 const controlerClassificacao = require('./controller/classificacao/controler_classificacao.js')
+const controlerSexo = require('./controller/sexo/controler_sexo.js')
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -121,6 +122,18 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
   response.status(result.status_code)
   response.json(result)
  })
+
+ // End-Points de Sexo----------------------------------------------------
+
+ app.post('/v1/senai/locadora/sexo/inserir' , bodyParserJSON , async function(request,response) {
+
+  let dados = request.body
+  let contentType = request.headers['content-type']
+  let result = await controlerSexo.inserirSexo(dados,contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+})
 
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;
