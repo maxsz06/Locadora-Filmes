@@ -143,6 +143,24 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
   response.json(result)
  })
 
+ app.put('/v1/senai/locadora/atualizar/sexo/:id',bodyParserJSON, async function (request,response) {
+  let contentType = request.headers['content-type']
+  let id = request.params.id
+  let sexo = request.body
+
+  let result = await controlerSexo.atualizarSexo(sexo,id,contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+ })
+
+ app.get('/v1/senai/locadora/listar/sexo', async function(request,response) {
+  let result = await controlerSexo.listarSexo()
+
+    response.status(result.status_code)
+    response.json(result)
+ })
+
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {

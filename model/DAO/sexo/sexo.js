@@ -64,7 +64,26 @@ const updateSexo = async function (sexo) {
     }
 }
 
+const selectAllSexo = async function () {
+    try {
+        // script para retornar todos os filmes 
+        let sql = `select * from tbl_sexo order by id desc`
+
+        //Executa no banco de dados o script SQL para retornar os filmes
+        let result = await knexConex.raw(sql)
+
+        //Validção para vereficar se o retorno no BD é um array
+        //Se o scriptSQL der erro, o banco devolve um array
+        if(Array.isArray(result)){
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+            return false
+    } 
+}
 module.exports={
     insertSexo,updateSexo,
-    selectByIdSexo,
+    selectByIdSexo,selectAllSexo
 }

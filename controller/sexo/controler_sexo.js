@@ -68,10 +68,33 @@ const buscarSexo = async function (id) {
 }
 
 const atualizarSexo = async function (sexo,id,contentType){
-  let message = JSON.parse(JSON.stringify(config_message)) 
+  let message = JSON.parse(JSON.stringify(configMessages)) 
   try {
     if(String(contentType).toUpperCase()=='APPLICATION/JSON'){
         let resultBuscarID = await buscarSexo(id)
+
+        if(resultBuscarID.status){
+         let validar = await validarDados(sexo)
+         if(!validar){
+            sexo.id= id
+            let result = await sexoDAO.updateSexo(sexo)
+        
+        if(result){
+            message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDETED_ITEM.status
+            message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDETED_ITEM.status_code
+            message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDETED_ITEM.message
+            message.DEFAULT_MESSAGE.response = sexo
+            return message.DEFAULT_MESSAGE // 200 (Atualizado)
+        }else{
+         return message.ERROR_INTERNAL_SEVER_MODEL //500 (Model)
+        }
+         }else{  
+          return validar //400  
+         }   
+
+          }else{         
+           return resultBuscarID //400 ou 404 ou 500
+          }
     }else{
         return message.ERROR_CONTENT_TYPE //415 -> ERRO NO CONTENT TYPE
     }
@@ -95,6 +118,29 @@ const validarDados = async function (sexo) {
     }
 };
 
+const listarSexo = async function () {
+  let message = JSON.parse(JSON.stringify(configMessages))
+  try {
+    let result = await sexoDAO.selectAllSexo()
+    if(result){
+        if(result.length > 0){
+          message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
+          message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
+          message.DEFAULT_MESSAGE.response.count=result.length
+          message.DEFAULT_MESSAGE.response.sexo = result
+  
+          return message.DEFAULT_MESSAGE // 200 (Dados do filme)
+        }else{
+          return message.ERROR_NOT_FOUND // 404 
+        }
+      }else{
+        return message.ERROR_INTERNAL_SEVER_MODEL //500 (model)
+      }
+  } catch (error) {
+    return message.ERROR_INTERNAL_CONTROLER  // 500 (controler)
+  }
+}
 module.exports={
-    inserirSexo, buscarSexo
+    inserirSexo, buscarSexo,
+    atualizarSexo,listarSexo
 }

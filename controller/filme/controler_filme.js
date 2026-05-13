@@ -80,8 +80,8 @@ const atualizarFilme = async function (filme,id, contentType) {
           }  
       }else{
         console.log('teste')
-        
-         return resultBuscarID //400 ou 404 ou 500
+          
+          return resultBuscarID //400 ou 404 ou 500
       }
     }else{
       return message.ERROR_CONTENT_TYPE //415 -> ERRO NO CONTENT TYPE
