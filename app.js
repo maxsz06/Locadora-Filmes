@@ -161,6 +161,14 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
     response.json(result)
  })
 
+ app.delete('/v1/senai/locadora/sexo/delete/:id',async function (request,response){
+  let id = request.params.id
+  let result = await controlerSexo.excluirSexo(id)
+
+  response.status(result.status_code)
+  response.json(result)
+ })
+
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {

@@ -140,7 +140,31 @@ const listarSexo = async function () {
     return message.ERROR_INTERNAL_CONTROLER  // 500 (controler)
   }
 }
+
+const excluirSexo =  async function (id) {
+
+  let message = JSON.parse(JSON.stringify(configMessages));
+
+    try {
+      let resultBuscarID = await buscarSexo(id)
+  
+      if(resultBuscarID.status){ // validação para vereficar se o status é verdadeiro (se existe o filme)
+        let result = await sexoDAO.deleteSexo(id) // chamar a função do DAO para excluir o filme
+          if(result){
+            return message.SUCCESS_DELETED_ITEM //200 (Registro excluído)
+          }else{
+            return message.ERROR_INTERNAL_SEVER_MODEL // 500 (model)
+          }
+      }else{
+        return resultBuscarID //400 ou 404
+      }
+    } catch (error) {
+      return message.ERROR_INTERNAL_CONTROLER; // 500 (Controller)
+    }
+
+}
 module.exports={
     inserirSexo, buscarSexo,
-    atualizarSexo,listarSexo
+    atualizarSexo,listarSexo,
+    excluirSexo
 }

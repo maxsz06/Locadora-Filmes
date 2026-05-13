@@ -83,7 +83,26 @@ const selectAllSexo = async function () {
             return false
     } 
 }
+
+const deleteSexo = async function(id){
+
+    try {
+         let sql = `delete from tbl_sexo where id = ${id};`
+         let result = await knexConex.raw(sql)
+
+    if(result){
+        return result
+    }else{
+        return true
+    }
+     } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
 module.exports={
     insertSexo,updateSexo,
-    selectByIdSexo,selectAllSexo
+    selectByIdSexo,selectAllSexo,
+    deleteSexo
 }
