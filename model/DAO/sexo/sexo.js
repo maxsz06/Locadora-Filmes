@@ -29,6 +29,42 @@ const insertSexo = async function (sexo) {
     }
 }
 
+const selectByIdSexo = async function (id) {
+    
+    try {
+        let sql = `select * from tbl_sexo where id=${id}`
+        let result = await knexConex.raw(sql)
+
+        if (Array.isArray(result)){
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+const updateSexo = async function (sexo) {
+    try {
+        let sql = `
+        UPDATE tbl_sexo SET 
+        	genero = '${sexo.genero}',
+           sigla = '${sexo.sigla}'
+        where id =  ${sexo.id};`
+
+        let result = await knexConex.raw(sql)
+        if (result)
+            return true
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports={
-    insertSexo,
+    insertSexo,updateSexo,
+    selectByIdSexo,
 }

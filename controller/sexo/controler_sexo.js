@@ -38,6 +38,49 @@ const inserirSexo = async function (sexo, contentType) {
     }
 };
 
+const buscarSexo = async function (id) {
+    let message = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+     if(id == '' || id == null || id == undefined || isNaN(id) ){
+          message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
+          return message.ERROR_BAD_REQUEST //400
+        }else{
+         let result = await sexoDAO.selectByIdSexo(id)
+
+         if(result){
+            if(result.length>0){
+              message.DEFAULT_MESSAGE.status =  message.SUCCESS_RESPONSE.status
+              message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
+              message.DEFAULT_MESSAGE.response.sexo = result 
+
+              return message.DEFAULT_MESSAGE // 200
+            }else{
+              return message.ERROR_NOT_FOUND //404
+            }
+        }else{
+          return message.ERROR_INTERNAL_SEVER_MODEL // 500 (model)
+        }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_CONTROLER //500 (controler )
+    }
+}
+
+const atualizarSexo = async function (sexo,id,contentType){
+  let message = JSON.parse(JSON.stringify(config_message)) 
+  try {
+    if(String(contentType).toUpperCase()=='APPLICATION/JSON'){
+        let resultBuscarID = await buscarSexo(id)
+    }else{
+        return message.ERROR_CONTENT_TYPE //415 -> ERRO NO CONTENT TYPE
+    }
+  } catch (error) {
+    return message.ERROR_INTERNAL_CONTROLER // 500 (controler)
+  }    
+    
+}
+
 const validarDados = async function (sexo) {
     let message = JSON.parse(JSON.stringify(configMessages));
 
@@ -53,5 +96,5 @@ const validarDados = async function (sexo) {
 };
 
 module.exports={
-    inserirSexo
+    inserirSexo, buscarSexo
 }
