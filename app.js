@@ -13,6 +13,7 @@ const bodyParser    = require('body-parser')
 const controlerFilme = require ('./controller/filme/controler_filme.js') // Controler FILME
 const controlerClassificacao = require('./controller/classificacao/controler_classificacao.js')
 const controlerSexo = require('./controller/sexo/controler_sexo.js')
+const controlerAtor = require('./controller/ator/ator_controler.js')
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -168,6 +169,52 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON,async function(request,re
   response.status(result.status_code)
   response.json(result)
  })
+
+
+ //--------[EndPoints - ATOR]----------------------
+ app.post('/v1/senai/locadora/ator/inserir', bodyParserJSON , async function (request,response) {
+  let dados = request.body
+  let contentType = request.headers['content-type']
+  let result = await controlerAtor.inserirNovoAtor(dados,contentType)
+
+  
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.get('/v1/senai/locadora/ator/:id',async function (request,response){
+    let id = request.params.id
+    let result = await controlerAtor.buscarAtor(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.put('/v1/senai/locadora/atualizar/ator/:id',bodyParserJSON, async function (request,response) {
+  let contentType = request.headers['content-type']
+  let id = request.params.id
+  let ator = request.body
+
+  let result = await controlerAtor.atualizarAtor(ator,id,contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+ })
+
+ app.get('/v1/senai/locadora/listar/ator', async function(request,response) {
+  let result = await controlerAtor.listarAtor()
+
+    response.status(result.status_code)
+    response.json(result)
+ })
+
+ app.delete('/v1/senai/locadora/ator/delete/:id',async function (request,response){
+  let id = request.params.id
+  let result = await controlerAtor.excluirAtor(id)
+
+  response.status(result.status_code)
+  response.json(result)
+ }) 
 
 //----------------------------------------------------------------------------------------------------------------------
 const PORT = process.env.PORT || 8080;
