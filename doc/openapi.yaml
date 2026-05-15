@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Projeto do SENAI Jandira - Professor Marcel
-  description: API destinada a controle de alunos
+  title: Projeto do SENAI Jandira - Maxwillian
+  description: API destinada a controle de Locadora
   termsOfService: http://swagger.io/terms/
   version: 1.0.0
 externalDocs:
@@ -10,29 +10,31 @@ externalDocs:
 servers:
   - url: http://
 paths:
-  /v1/aluno:
+  /v1/senai/locadora/filme:
     post:
       tags:
-        - aluno
-      summary: Adiciona um novo Aluno
-      description: Adiciona um novo Aluno
+        - Filme
+      summary: Adiciona um novo Filme
+      description: Adiciona um novo Filme
       requestBody:
         description: JSON contendo os dados do anovo aluno a ser inserido no sistema
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Aluno'
+              $ref: '#/components/schemas/Filme'
         required: true
       responses:
         '201':
           description: Successful operation
         '400':
           description: Invalid input
+        '500':
+          description: Error Internal Sever (Controler or Model)  
     get:
       tags:
-        - aluno
-      summary: Lista todos os alunos
-      description: Listagem de todos os alunos registrados no sistema
+        - Filme
+      summary: Lista todos os Filmes
+      description: Listagem de todos os filme registrados no sistema
       responses:
         '200':
           description: successful operation
@@ -41,15 +43,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Aluno'          
-           
+                  $ref: '#/components/schemas/Filme'          
+     
         '404':
           description: Not Found
-  /v1/aluno/{id}:
+  /v1/filme/{id}:
     get:
       tags:
-        - aluno
-      summary: Busca um aluno prlo ID
+        - Filme
+      summary: Busca um Filme pelo ID
       description: Retorna um aluno pelo ID
       parameters:
         - name: id
@@ -144,10 +146,18 @@ components:
           type: integer
         nome:
           type: string
-        celular:
+        data_lancamento:
           type: string
-        email:
+        duracao:
           type: string
+        sinopse:
+          type: string
+        avaliacao:
+          type: integer    
+        valor:
+          type: interger
+        capa:
+          type: string    
   requestBodies:
     Aluno:
       description: Objeto que deve ser enviado no Body das requisicoes
