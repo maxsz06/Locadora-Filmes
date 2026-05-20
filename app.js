@@ -14,6 +14,7 @@ const controlerFilme = require ('./controller/filme/controler_filme.js') // Cont
 const controlerClassificacao = require('./controller/classificacao/controler_classificacao.js')
 const controlerSexo = require('./controller/sexo/controler_sexo.js')
 const controlerAtor = require('./controller/ator/ator_controler.js')
+const generoController = require('./controller/genero/controler_genero.js') // ajuste o caminho se necessário
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -217,6 +218,51 @@ app.put('/v1/senai/locadora/atualizar/ator/:id',bodyParserJSON, async function (
  }) 
 
 //----------------------------------------------------------------------------------------------------------------------
+ 
+// ------------------------ [END POINTS DE GENERO ] -----------------------------------------------------
+app.post('/v1/senai/locadora/genero/inserir', bodyParserJSON, async function (request, response) {
+  let dados = request.body
+  let contentType = request.headers['content-type']
+  let result = await generoController.inserirNovoGenero(dados, contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.get('/v1/senai/locadora/genero/:id', async function (request, response) {
+  let id = request.params.id
+  let result = await generoController.buscarGenero(id)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.put('/v1/senai/locadora/atualizar/genero/:id', bodyParserJSON, async function (request, response) {
+  let contentType = request.headers['content-type']
+  let id = request.params.id
+  let genero = request.body
+
+  let result = await generoController.atualizarGenero(genero, id, contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.get('/v1/senai/locadora/listar/genero', async function (request, response) {
+  let result = await generoController.listarGeneros()
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.delete('/v1/senai/locadora/genero/delete/:id', async function (request, response) {
+  let id = request.params.id
+  let result = await generoController.excluirGenero(id)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {
   console.log("API FUNCIONANDO E AGUARDANDO NOVAS REQUISIÇÕES ...");

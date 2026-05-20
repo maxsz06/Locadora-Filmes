@@ -8,6 +8,7 @@
 
 const config_message = require("../modulo/configMessages.js"); // import do arquivo de predonizção de mensagens
 const filmeDAO = require("../../model/DAO/filme/filme.js"); // Import do arquivo DAO para fazer o DAO  do filme no banco de dados
+const controler_classificacao = require('../classificacao/controler_classificacao.js') // Import de arquivos de Controler
 
 //Fução para inserir um novo filme
 const inserirNovoFilme = async function (filme, contentType) {
@@ -34,7 +35,7 @@ const inserirNovoFilme = async function (filme, contentType) {
 
         } else {
           //500
-          return message.ERROR_INTERNAL_SEVER_MODE; // 500
+          return message.ERROR_INTERNAL_SEVER_MODEL; // 500
         }
         return message.DEFAULT_MESSAGE;
       }
@@ -103,6 +104,18 @@ const listarFilme = async function () {
     //Validação para ver se existe conteúdo no array
     if(result){
       if(result.length > 0){
+
+        for (filme of result) { // Percorre o ARRAY de filmes para identificar os dados da classificação
+          // busca na controler da classificação o ID referente aos dados
+          let resultClassificacao = await controler_classificacao.buscarClassificacao(filme.id_classificacao)
+          // Se a classificação for encontrada
+          if(resultClassificacao.status){
+            // Cria o atribúto classificação no filme e adiciona os dados referente a classificação 
+            filme.classificacao = resultClassificacao.response.classificacao  
+            delete filme.id_classificacao// Apaga o atributo id_classificação do filme para não ficar repitido
+          }
+        }
+
         message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
         message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
         message.DEFAULT_MESSAGE.response.count=result.length
@@ -134,6 +147,18 @@ const buscarFilme = async function (id) {
         
         if(result){
             if(result.length>0){
+
+              for (filme of result) { // Percorre o ARRAY de filmes para identificar os dados da classificação
+                // busca na controler da classificação o ID referente aos dados
+                let resultClassificacao = await controler_classificacao.buscarClassificacao(filme.id_classificacao)
+                // Se a classificação for encontrada
+                if(resultClassificacao.status){
+                  // Cria o atribúto classificação no filme e adiciona os dados referente a classificação 
+                  filme.classificacao = resultClassificacao.response.classificacao  
+                  delete filme.id_classificacao// Apaga o atributo id_classificação do filme para não ficar repitido
+                }
+              }
+              
               message.DEFAULT_MESSAGE.status =  message.SUCCESS_RESPONSE.status
               message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
               message.DEFAULT_MESSAGE.response.filme = result 
@@ -183,39 +208,42 @@ const validarDados = async function (filme) {
   if (filme.nome == undefined || filme.nome == null || filme.nome == "" || filme.nome.length > 80){
     message.ERROR_BAD_REQUEST.field = "[NOME] INVÁLIDO";
     console.log("erro 1");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   }else if (filme.data_lancamento == undefined || filme.data_lancamento == null || filme.data_lancamento == "" || filme.data_lancamento.length != 10){
     message.ERROR_BAD_REQUEST.field = "[DATA] INVÁLIDA";
     console.log("erro 2");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   } else if (filme.duracao == undefined || filme.duracao == null || filme.duracao == "" || filme.duracao.length < 5) {
     message.ERROR_BAD_REQUEST.field = "[DURAÇÃO] INVÁLIDO";
     console.log("erro 3 ");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   } else if (filme.sinopse == undefined || filme.sinopse == null || filme.sinopse == ""){
     message.ERROR_BAD_REQUEST.field = "[SINOPSE] INVÁLIDO";
     console.log("erro 4");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   } else if (isNaN(filme.avaliacao) || filme.avaliacao.length > 5) {
     message.ERROR_BAD_REQUEST.field = "[AVALIAÇÃO] INVÁLIDO";
     console.log("erro 5");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   } else if (filme.valor == undefined || filme.valor == null || filme.valor == "" || isNaN(filme.valor) || filme.valor.split('.')[0].length > 3){
     message.ERROR_BAD_REQUEST.field = "[VALOR] INVÁLIDO";
     console.log("erro 6");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
   } else if (filme.capa.length > 255) {
     message.ERROR_BAD_REQUEST.field = "[CAPA] INVÁLIDA";
     console.log("erro 7");
-    return message.ERROR_BAD_REQUEST;
+    return message.ERROR_BAD_REQUEST;//400
 
-  } else {
+  } else if(filme.id_classificacao == undefined || filme.id_classificacao == null || filme.id_classificacao == "" || isNaN(filme.id_classificacao) || filme.id_classificacao <= 0){
+    message.ERROR_BAD_REQUEST.field = "[ID_CLASSIFICACAO] INVÁLIDO "; // VALIDAÇÃO PARA A FK DA CLASSIFICAÇÃO
+    return message.ERROR_BAD_REQUEST; //400
+  }else {
     return false;
   }
 };
