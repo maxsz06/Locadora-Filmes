@@ -16,6 +16,7 @@ const controlerSexo = require('./controller/sexo/controler_sexo.js')
 const controlerAtor = require('./controller/ator/ator_controler.js')
 const generoController = require('./controller/genero/controler_genero.js') // ajuste o caminho se necessário
 const controlerIdioma = require('./controller/idioma/idioma_controler.js')
+const controlerDiretor = require('./controller/diretor/controler_diretor.js')
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -311,8 +312,49 @@ app.delete('/v1/senai/locadora/idioma/delete/:id', async function (request, resp
 })
 
 //-----------------------------------------------------------------------------
-
-
+ 
+app.post('/v1/senai/locadora/diretor/inserir', bodyParserJSON, async function (request, response) {
+    let dados = request.body
+    let contentType = request.headers['content-type']
+    let result = await controlerDiretor.inserirNovoDiretor(dados, contentType)
+ 
+    response.status(result.status_code)
+    response.json(result)
+})
+ 
+app.get('/v1/senai/locadora/diretor/:id', async function (request, response) {
+    let id = request.params.id
+    let result = await controlerDiretor.buscarDiretor(id)
+ 
+    response.status(result.status_code)
+    response.json(result)
+})
+ 
+app.put('/v1/senai/locadora/atualizar/diretor/:id', bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+    let id = request.params.id
+    let diretor = request.body
+ 
+    let result = await controlerDiretor.atualizarDiretor(diretor, id, contentType)
+ 
+    response.status(result.status_code)
+    response.json(result)
+})
+ 
+app.get('/v1/senai/locadora/listar/diretor', async function (request, response) {
+    let result = await controlerDiretor.listarDiretores()
+ 
+    response.status(result.status_code)
+    response.json(result)
+})
+ 
+app.delete('/v1/senai/locadora/diretor/delete/:id', async function (request, response) {
+    let id = request.params.id
+    let result = await controlerDiretor.excluirDiretor(id)
+ 
+    response.status(result.status_code)
+    response.json(result)
+})
 
 
 
