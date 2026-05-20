@@ -15,6 +15,7 @@ const controlerClassificacao = require('./controller/classificacao/controler_cla
 const controlerSexo = require('./controller/sexo/controler_sexo.js')
 const controlerAtor = require('./controller/ator/ator_controler.js')
 const generoController = require('./controller/genero/controler_genero.js') // ajuste o caminho se necessário
+const controlerIdioma = require('./controller/idioma/idioma_controler.js')
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -220,7 +221,7 @@ app.put('/v1/senai/locadora/atualizar/ator/:id',bodyParserJSON, async function (
 //----------------------------------------------------------------------------------------------------------------------
  
 // ------------------------ [END POINTS DE GENERO ] -----------------------------------------------------
-app.post('/v1/senai/locadora/genero/inserir', bodyParserJSON, async function (request, response) {
+app.post('/v1/senai/locadora/genero/inserir', bodyParserJSON, async function (request, response) { // Inserir novo Genero
   let dados = request.body
   let contentType = request.headers['content-type']
   let result = await generoController.inserirNovoGenero(dados, contentType)
@@ -229,7 +230,7 @@ app.post('/v1/senai/locadora/genero/inserir', bodyParserJSON, async function (re
   response.json(result)
 })
 
-app.get('/v1/senai/locadora/genero/:id', async function (request, response) {
+app.get('/v1/senai/locadora/genero/:id', async function (request, response) { // buscar GENERO pelo ID
   let id = request.params.id
   let result = await generoController.buscarGenero(id)
 
@@ -262,6 +263,58 @@ app.delete('/v1/senai/locadora/genero/delete/:id', async function (request, resp
   response.status(result.status_code)
   response.json(result)
 })
+// --------------------------------------------------------------------------------------------------------------
+
+//-------------------[END POINTS DE Idioma]------------------------------------------
+
+app.post('/v1/senai/locadora/idioma/inserir', bodyParserJSON, async function (request, response) {
+  let dados = request.body
+  let contentType = request.headers['content-type']
+  let result = await controlerIdioma.inserirNovoIdioma(dados, contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.get('/v1/senai/locadora/idioma/:id', async function (request, response) {
+  let id = request.params.id
+  let result = await controlerIdioma.buscarIdioma(id)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.put('/v1/senai/locadora/atualizar/idioma/:id', bodyParserJSON, async function (request, response) {
+  let contentType = request.headers['content-type']
+  let id = request.params.id
+  let idioma = request.body
+
+  let result = await controlerIdioma.atualizarIdioma(idioma, id, contentType)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.get('/v1/senai/locadora/listar/idioma', async function (request, response) {
+  let result = await controlerIdioma.listarIdiomas()
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+app.delete('/v1/senai/locadora/idioma/delete/:id', async function (request, response) {
+  let id = request.params.id
+  let result = await controlerIdioma.excluirIdioma(id)
+
+  response.status(result.status_code)
+  response.json(result)
+})
+
+//-----------------------------------------------------------------------------
+
+
+
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {

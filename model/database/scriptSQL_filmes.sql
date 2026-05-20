@@ -56,7 +56,7 @@ insert into tbl_classificacao(
     'Conteúdo com violência fantasiosa ou leve',
     '12'
     );
-desc tbl_classificacao;
+desc tbl_genero;
 SELECT * FROM tbl_classificacao des;
 
 UPDATE tbl_classificacao SET
@@ -66,3 +66,18 @@ WHERE id = 5;
 
 SELECT * FROM tbl_classificacao WHERE id = 1;
 
+create table tbl_genero(
+	id 						int not null primary key auto_increment,
+    nome					varchar(45) not null,		
+    descricao				int not null
+);
+
+insert into tbl_genero(
+	nome,
+    descricao)
+    values(
+    'Teste insert - nome',
+    'Teste insert - descricao'
+);
+
+select * from tbl_genero; 
