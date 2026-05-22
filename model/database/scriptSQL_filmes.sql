@@ -80,4 +80,23 @@ insert into tbl_genero(
     'Teste insert - descricao'
 );
 
-select * from tbl_genero; 
+create table tbl_plataformas(
+	id 						int not null primary key auto_increment,
+	img						varchar(250) not null
+);
+
+alter table tbl_plataformas add column nome varchar(25) not null;
+
+
+select * from tbl_filme; 
+
+select tbl_filme.*
+                   from  tbl_filme
+                        inner join tbl_filme_genero
+                          on tbl_filme.id = tbl_filme_genero.id_filme
+                        inner join tbl_genero
+                          on tbl_genero.id = tbl_filme_genero.id_genero  
+					             where tbl_genero.id = 2;
+
+select * from tbl_filme_genero;
+delete from tbl_filme_genero;

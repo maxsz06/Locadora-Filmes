@@ -28,6 +28,7 @@ const SUCCESS_CREATED_ITEM      = {status : true, status_code:201,message:'Regis
 const SUCCESS_UPDETED_ITEM      = {status : true, status_code:201,message:'Registro atualizado com um sucesso!'} // Retorno para PUT
 const SUCCESS_RESPONSE          = {status : true, status_code:200} // Retorno para GET
 const SUCCESS_DELETED_ITEM      =  {status : true, status_code:200,message:'Registro Deletado com um sucesso!'} // Retorno para GET
+const SUCCESS_CREATED_WARNING      = {status : true, status_code:201,message:'Os dados principais foram inseridos com um sucesso, porem alguns dados apresentaram problemas'} // Retorno para GET
 
 
 
@@ -39,5 +40,5 @@ module.exports = {
     ERROR_INTERNAL_SEVER_MODEL, ERROR_CONTENT_TYPE,
     ERROR_INTERNAL_CONTROLER, ERROR_NOT_FOUND,
     SUCCESS_RESPONSE, SUCCESS_UPDETED_ITEM,
-    SUCCESS_DELETED_ITEM
+    SUCCESS_DELETED_ITEM, SUCCESS_CREATED_WARNING
 }

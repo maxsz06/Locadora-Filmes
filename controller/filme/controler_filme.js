@@ -9,6 +9,7 @@
 const config_message = require("../modulo/configMessages.js"); // import do arquivo de predonizção de mensagens
 const filmeDAO = require("../../model/DAO/filme/filme.js"); // Import do arquivo DAO para fazer o DAO  do filme no banco de dados
 const controler_classificacao = require('../classificacao/controler_classificacao.js') // Import de arquivos de Controler
+const controler_filme_genero = require('./controler_filme_genero.js')
 
 //Fução para inserir um novo filme
 const inserirNovoFilme = async function (filme, contentType) {
@@ -28,6 +29,20 @@ const inserirNovoFilme = async function (filme, contentType) {
         // encaminha os dados do filme para o DAO
         if (result) { //201
           filme.id=result
+
+          // Manipulação de dados para inserir os generos do filme
+          for(genero of filme.genero){
+            // cria o bjseto json com os ids do filme e do genero
+          let filmeGenero = {"id_filme": filme.id,
+                             "id_genero": genero.id 
+                            }
+          // chama a controler filme genero para inserir os IDs                  
+          let resultInsertGenero =await controler_filme_genero.inserirNovoFilmeGenero(filmeGenero)
+                            console.log(resultInsertGenero)
+          if(!resultInsertGenero.status){
+            return message.SUCCESS_CREATED_WARNING // 201 com alerta de dados não inseridos 
+          }                  
+        }
           message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status;
           message.DEFAULT_MESSAGE.status_code = message.SUCCESS_CREATED_ITEM.status_code;
           message.DEFAULT_MESSAGE.message = message.SUCCESS_CREATED_ITEM.message;
@@ -114,7 +129,14 @@ const listarFilme = async function () {
             filme.classificacao = resultClassificacao.response.classificacao  
             delete filme.id_classificacao// Apaga o atributo id_classificação do filme para não ficar repitido
           }
+
+          //cria o objeto de generos relacionados ao Filme
+          let resultGenero = await controler_filme_genero.buscarGeneroIdFilme(filme.id)
+          if(resultGenero.status){
+            filme.genero = resultGenero.response.filme_genero
+          }
         }
+
 
         message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
         message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
@@ -157,6 +179,12 @@ const buscarFilme = async function (id) {
                   filme.classificacao = resultClassificacao.response.classificacao  
                   delete filme.id_classificacao// Apaga o atributo id_classificação do filme para não ficar repitido
                 }
+
+                        //cria o objeto de generos relacionados ao Filme
+                 let resultGenero = await controler_filme_genero.buscarGeneroIdFilme(filme.id)
+                 if(resultGenero.status){
+                filme.genero = resultGenero.response.filme_genero
+            }  
               }
               
               message.DEFAULT_MESSAGE.status =  message.SUCCESS_RESPONSE.status

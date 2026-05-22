@@ -17,6 +17,7 @@ const controlerAtor = require('./controller/ator/ator_controler.js')
 const generoController = require('./controller/genero/controler_genero.js') // ajuste o caminho se necessário
 const controlerIdioma = require('./controller/idioma/idioma_controler.js')
 const controlerDiretor = require('./controller/diretor/controler_diretor.js')
+const controlerPlataforma = require('./controller/plataforma/controles_plataformas.js')
 
 //Criando um objeto para manipular dados do body da API em formato JSON
 const bodyParserJSON = bodyParser.json()
@@ -311,7 +312,7 @@ app.delete('/v1/senai/locadora/idioma/delete/:id', async function (request, resp
   response.json(result)
 })
 
-//-----------------------------------------------------------------------------
+//-----------------------[End Points Diretor]----------------------------------------------------
  
 app.post('/v1/senai/locadora/diretor/inserir', bodyParserJSON, async function (request, response) {
     let dados = request.body
@@ -357,6 +358,49 @@ app.delete('/v1/senai/locadora/diretor/delete/:id', async function (request, res
 })
 
 
+// ------------- [End Points Plataforma] -------------------------
+app.post('/v1/senai/locadora/plataforma/inserir', bodyParserJSON, async function (request, response) {
+    let dados = request.body
+    let contentType = request.headers['content-type']
+    let result = await controlerPlataforma.inserirNovaPlataforma(dados, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/senai/locadora/plataforma/:id', async function (request, response) {
+    let id = request.params.id
+    let result = await controlerPlataforma.buscarPlataforma(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.put('/v1/senai/locadora/atualizar/plataforma/:id', bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+    let id = request.params.id
+    let plataforma = request.body
+
+    let result = await controlerPlataforma.atualizarPlataforma(plataforma, id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/senai/locadora/listar/plataforma', async function (request, response) {
+    let result = await controlerPlataforma.listarPlataformas()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.delete('/v1/senai/locadora/plataforma/delete/:id', async function (request, response) {
+    let id = request.params.id
+    let result = await controlerPlataforma.excluirPlataforma(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {
