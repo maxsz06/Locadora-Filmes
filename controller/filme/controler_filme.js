@@ -82,6 +82,27 @@ const atualizarFilme = async function (filme,id, contentType) {
             let result = await filmeDAO.updateFilme(filme)
 
             if(result){
+
+              // Manipulação de dados na tabela de relação entre filme e genero 
+              let resultDeleteGenero = await controler_filme_genero.excluirGenerosIdFilme(filme.id)
+
+              //Apos a exclusão de todos os generos relacionados com o filme 
+              if(resultDeleteGenero.status){
+
+                for(genero of filme.genero){
+                  // cria o bjseto json com os ids do filme e do genero
+                let filmeGenero = {"id_filme": filme.id,
+                                   "id_genero": genero.id 
+                                  }
+                // chama a controler filme genero para inserir os IDs                  
+                let resultInsertGenero =await controler_filme_genero.inserirNovoFilmeGenero(filmeGenero)
+                                  console.log(resultInsertGenero)
+                if(!resultInsertGenero.status){
+                  return message.SUCCESS_CREATED_WARNING // 201 com alerta de dados não inseridos 
+                }                  
+               }
+              }
+
                message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDETED_ITEM.status
                message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDETED_ITEM.status_code
                message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDETED_ITEM.message

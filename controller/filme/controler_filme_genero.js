@@ -26,7 +26,7 @@ const inserirNovoFilmeGenero = async function (filmeGenero) {
                     message.DEFAULT_MESSAGE.response = filmeGenero // 
 
                 } else {
-                    return message.ERROR_INTERNAL_SEVER_MODE // 500
+                    return message.ERROR_INTERNAL_SEVER_MODEL // 500
                 }
                 return message.DEFAULT_MESSAGE
             }
@@ -210,6 +210,23 @@ const excluirFilmeGenero = async function (id) {
     }
 }
 
+//Função para excluir os generos relacionados com o filme
+const excluirGenerosIdFilme = async function (idFilme) {
+    let message = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+            let result = await FilmegeneroDAO.deleteGenerosByIDFilme(idFilme)
+
+            if (result) {
+                return message.SUCCESS_DELETED_ITEM // 200 (Registro excluído)
+            } else {
+                return message.ERROR_INTERNAL_SEVER_MODEL // 500 (Model)
+            }
+    } catch (error) {
+        console.log(error)
+        return message.ERROR_INTERNAL_CONTROLER // 500 (Controller)
+    }
+}
 
 module.exports = {
     inserirNovoFilmeGenero,
@@ -219,5 +236,6 @@ module.exports = {
     excluirFilmeGenero,
 
     buscarFilmeIdGenero,
-    buscarGeneroIdFilme
+    buscarGeneroIdFilme,
+    excluirGenerosIdFilme
 }
