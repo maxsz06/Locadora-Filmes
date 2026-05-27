@@ -98,5 +98,26 @@ select tbl_filme.*
                           on tbl_genero.id = tbl_filme_genero.id_genero  
 					             where tbl_genero.id = 2;
 
-select * from tbl_filme_genero;
-delete from tbl_filme_genero;
+
+create table tbl_plataformas_filme(
+	id 						int not null primary key auto_increment,	
+	id_filme				int not null,
+    id_plataformas			int not null,
+    
+    constraint FK_PLATAFORMASFILME_FILME
+    foreign key (id_filme)
+	references tbl_filme(id),
+    
+    constraint FK_PLATAFORMASFILME_PLATAFORMA
+    foreign key (id_plataformas)
+    references tbl_plataformas(id)
+);
+select * from tbl_plataformas_filme; 
+
+SELECT tbl_filme.*
+FROM tbl_filme
+    INNER JOIN tbl_plataformas_filme
+        ON tbl_filme.id = tbl_plataformas_filme.id_filme
+    INNER JOIN tbl_plataformas
+        ON tbl_plataformas.id = tbl_plataformas_filme.id_plataformas
+WHERE tbl_plataformas.id = 4;

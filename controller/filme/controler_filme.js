@@ -8,8 +8,12 @@
 
 const config_message = require("../modulo/configMessages.js"); // import do arquivo de predonizção de mensagens
 const filmeDAO = require("../../model/DAO/filme/filme.js"); // Import do arquivo DAO para fazer o DAO  do filme no banco de dados
+
 const controler_classificacao = require('../classificacao/controler_classificacao.js') // Import de arquivos de Controler
-const controler_filme_genero = require('./controler_filme_genero.js')
+const controler_filme_genero = require('./controler_filme_genero.js') // IMPORT - FILME - PLATAFORMAS
+
+const controler_plataformas = require('../plataforma/controles_plataformas.js')
+const controler_filme_plataformas = require('./controler_filme_plataformas.js')
 
 //Fução para inserir um novo filme
 const inserirNovoFilme = async function (filme, contentType) {
@@ -30,9 +34,9 @@ const inserirNovoFilme = async function (filme, contentType) {
         if (result) { //201
           filme.id=result
 
-          // Manipulação de dados para inserir os generos do filme
+          // Manipulação de dados para inserir os generos do filme ----------------------------------------------------
           for(genero of filme.genero){
-            // cria o bjseto json com os ids do filme e do genero
+            // cria o objeto json com os ids do filme e do genero
           let filmeGenero = {"id_filme": filme.id,
                              "id_genero": genero.id 
                             }
@@ -43,6 +47,19 @@ const inserirNovoFilme = async function (filme, contentType) {
             return message.SUCCESS_CREATED_WARNING // 201 com alerta de dados não inseridos 
           }                  
         }
+
+          // Manipulação de dados para inserir as plataformas do filme  ------------------------------------------      
+        for(plataformas of filme.plataformas){
+          let filmePlataformas = {
+                  "id_filme": filme.id,
+                  "id_plataformas": plataformas.id
+                            }
+          let resultInsertPlataformas = await controler_filme_plataformas.inserirNovoFilmePlataforma(filmePlataformas)            
+          if(!resultInsertPlataformas.status){
+            return message.SUCCESS_CREATED_WARNING // 201 com alerta de dados não inseridos 
+          }        
+        }
+
           message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status;
           message.DEFAULT_MESSAGE.status_code = message.SUCCESS_CREATED_ITEM.status_code;
           message.DEFAULT_MESSAGE.message = message.SUCCESS_CREATED_ITEM.message;
@@ -156,7 +173,13 @@ const listarFilme = async function () {
           if(resultGenero.status){
             filme.genero = resultGenero.response.filme_genero
           }
+
+          let resultPlataformas = await controler_filme_plataformas.buscarPlataformaIdFilme(filme.id)
+          if(resultPlataformas.status){
+            filme.plataformas = resultPlataformas.response.filme_plataformas
+          }
         }
+
 
 
         message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
@@ -181,33 +204,36 @@ const buscarFilme = async function (id) {
   let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-      //Validação para garantir o ID seja válido
-      if(id == '' || id == null || id == undefined || isNaN(id) ){
+      if(id == '' || id == null || id == undefined || isNaN(id)){
         message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
-          return message.ERROR_BAD_REQUEST //400
-      }else{
+          return message.ERROR_BAD_REQUEST
+      } else {
         let result = await filmeDAO.selectByIdFilme(id)
         
         if(result){
-            if(result.length>0){
-
-              for (filme of result) { // Percorre o ARRAY de filmes para identificar os dados da classificação
-                // busca na controler da classificação o ID referente aos dados
+            if(result.length > 0){
+// PARTE RESPONSAVEL PELO RESULT DAS INTERMEDIARIAS ------------------------------------------              
+              for (filme of result) {
+                // Result Classificação
                 let resultClassificacao = await controler_classificacao.buscarClassificacao(filme.id_classificacao)
-                // Se a classificação for encontrada
                 if(resultClassificacao.status){
-                  // Cria o atribúto classificação no filme e adiciona os dados referente a classificação 
                   filme.classificacao = resultClassificacao.response.classificacao  
-                  delete filme.id_classificacao// Apaga o atributo id_classificação do filme para não ficar repitido
+                  delete filme.id_classificacao
                 }
 
-                        //cria o objeto de generos relacionados ao Filme
-                 let resultGenero = await controler_filme_genero.buscarGeneroIdFilme(filme.id)
-                 if(resultGenero.status){
-                filme.genero = resultGenero.response.filme_genero
-            }  
+                // Result Genero
+                let resultGenero = await controler_filme_genero.buscarGeneroIdFilme(filme.id)
+                if(resultGenero.status){
+                  filme.genero = resultGenero.response.filme_genero
+                }
+
+                // Result Plataforma
+                let resultPlataformas = await controler_filme_plataformas.buscarPlataformaIdFilme(filme.id)
+                if(resultPlataformas.status){
+                    filme.plataformas = resultPlataformas.response.filme_plataformas
+                }
               }
-              
+// --------------------------------------------------------------------------------------              
               message.DEFAULT_MESSAGE.status =  message.SUCCESS_RESPONSE.status
               message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
               message.DEFAULT_MESSAGE.response.filme = result 
