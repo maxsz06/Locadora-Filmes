@@ -19,6 +19,7 @@ create table tbl_filme (
 show tables;
 
 #Inserir dados
+show tables;
 insert into tbl_filme(
 						nome,
                         data_lancamento,
@@ -56,7 +57,7 @@ insert into tbl_classificacao(
     'Conteúdo com violência fantasiosa ou leve',
     '12'
     );
-desc tbl_genero;
+desc tbl_classificacao;
 SELECT * FROM tbl_classificacao des;
 
 UPDATE tbl_classificacao SET
@@ -65,59 +66,17 @@ UPDATE tbl_classificacao SET
 WHERE id = 5;
 
 SELECT * FROM tbl_classificacao WHERE id = 1;
+select * from tbl_ator;
+describe  tbl_ator;
 
-create table tbl_genero(
-	id 						int not null primary key auto_increment,
-    nome					varchar(45) not null,		
-    descricao				int not null
-);
+alter table tbl_ator
+	change column biograia biografia varchar(250);
 
-insert into tbl_genero(
-	nome,
-    descricao)
-    values(
-    'Teste insert - nome',
-    'Teste insert - descricao'
-);
-
-create table tbl_plataformas(
-	id 						int not null primary key auto_increment,
-	img						varchar(250) not null
-);
-
-alter table tbl_plataformas add column nome varchar(25) not null;
-
-
-select * from tbl_filme; 
-
-select tbl_filme.*
-                   from  tbl_filme
-                        inner join tbl_filme_genero
-                          on tbl_filme.id = tbl_filme_genero.id_filme
-                        inner join tbl_genero
-                          on tbl_genero.id = tbl_filme_genero.id_genero  
-					             where tbl_genero.id = 2;
-
-
-create table tbl_plataformas_filme(
-	id 						int not null primary key auto_increment,	
-	id_filme				int not null,
-    id_plataformas			int not null,
+CREATE TABLE tbl_filme_idioma (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_filme INT NOT NULL,
+    id_idioma INT NOT NULL,
     
-    constraint FK_PLATAFORMASFILME_FILME
-    foreign key (id_filme)
-	references tbl_filme(id),
-    
-    constraint FK_PLATAFORMASFILME_PLATAFORMA
-    foreign key (id_plataformas)
-    references tbl_plataformas(id)
+    FOREIGN KEY (id_filme) REFERENCES tbl_filme(id),
+    FOREIGN KEY (id_idioma) REFERENCES tbl_idioma(id)
 );
-select * from tbl_plataformas_filme; 
-
-SELECT tbl_filme.*
-FROM tbl_filme
-    INNER JOIN tbl_plataformas_filme
-        ON tbl_filme.id = tbl_plataformas_filme.id_filme
-    INNER JOIN tbl_plataformas
-        ON tbl_plataformas.id = tbl_plataformas_filme.id_plataformas
-WHERE tbl_plataformas.id = 4;

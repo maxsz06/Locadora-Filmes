@@ -1,29 +1,30 @@
 /***********************************************************************************************
  *  Objetivo: Arquivo responsavel pela validação,tratamento e mainipulação de dados
- *            para o CRUD de Filme e Plataformas
- *  Data 22/05/2026
+ *            para o CRUD de Filme e Idioma
+ *  Data 29/05/2026
  *  Autor: Maxwillian Santana
  *  Versão: 1.0
  **********************************************************************************************/
 
 const configMessages = require('../modulo/configMessages.js')
-const FilmePlataformaDAO = require('../../model/DAO/filme_plataformas/filme_plataformas.js')
 
-const inserirNovoFilmePlataforma = async function (filmePlataforma) {
+const FilmeIdiomaDAO = require('../../model/DAO/filme_idioma/filme_idioma.js')
+
+const inserirNovoFilmeIdioma = async function (filmeIdioma) {
     let message = JSON.parse(JSON.stringify(configMessages))
     try {
-        let validar = await validarDados(filmePlataforma)
+        let validar = await validarDados(filmeIdioma)
 
         if (validar) {
             return validar // 400
         } else {
-            let result = await FilmePlataformaDAO.insertFilmePlataforma(filmePlataforma)
+            let result = await FilmeIdiomaDAO.insertFilmeIdioma(filmeIdioma)
 
             if (result) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_CREATED_ITEM.status_code
                 message.DEFAULT_MESSAGE.message = message.SUCCESS_CREATED_ITEM.message
-                message.DEFAULT_MESSAGE.response = filmePlataforma
+                message.DEFAULT_MESSAGE.response = filmeIdioma
 
             } else {
                 return message.ERROR_INTERNAL_SEVER_MODEL // 500
@@ -36,7 +37,7 @@ const inserirNovoFilmePlataforma = async function (filmePlataforma) {
     }
 }
 
-const buscarFilmePlataforma = async function (id) {
+const buscarFilmeIdioma = async function (id) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
@@ -44,12 +45,12 @@ const buscarFilmePlataforma = async function (id) {
             message.ERROR_BAD_REQUEST.field = '[ID] Inválido'
             return message.ERROR_BAD_REQUEST
         } else {
-            let result = await FilmePlataformaDAO.selectByIdFilmePlataforma(id)
+            let result = await FilmeIdiomaDAO.selectByIdFilmeIdioma(id)
 
             if (result) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
-                message.DEFAULT_MESSAGE.response.filme_plataforma = result
+                message.DEFAULT_MESSAGE.response.filme_idioma = result
 
                 return message.DEFAULT_MESSAGE // 200
             } else {
@@ -61,31 +62,32 @@ const buscarFilmePlataforma = async function (id) {
     }
 }
 
-const buscarFilmeIdPlataforma = async function (idPlataforma) {
+const buscarFilmeIdIdioma = async function (idIdioma) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        if (idPlataforma == undefined || idPlataforma == '' || idPlataforma == null || isNaN(idPlataforma)) {
-            message.ERROR_BAD_REQUEST.field = '[ID_PLATAFORMA] Inválido'
+        if (idIdioma == undefined || idIdioma == '' || idIdioma == null || isNaN(idIdioma)) {
+            message.ERROR_BAD_REQUEST.field = '[ID_IDIOMA] Inválido'
             return message.ERROR_BAD_REQUEST
         } else {
-            let result = await FilmePlataformaDAO.selectFilmesByIdPlataforma(idPlataforma)
+            let result = await FilmeIdiomaDAO.selectByIdFilmeIdioma(idIdioma)
 
-            if (result && result.length > 0) {
+            if (result) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
-                message.DEFAULT_MESSAGE.response.filmes = result
+                message.DEFAULT_MESSAGE.response.filme_idioma = result
+
                 return message.DEFAULT_MESSAGE // 200
             } else {
                 return message.ERROR_NOT_FOUND // 404
             }
         }
     } catch (error) {
-        return message.ERROR_INTERNAL_CONTROLER // 500
+        return message.ERROR_INTERNAL_CONTROLER // 500 (Controller)
     }
 }
 
-const buscarPlataformaIdFilme = async function (idFilme) {
+const buscarIdiomaIdFilme = async function (idFilme) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
@@ -93,12 +95,12 @@ const buscarPlataformaIdFilme = async function (idFilme) {
             message.ERROR_BAD_REQUEST.field = '[ID_FILME] Inválido'
             return message.ERROR_BAD_REQUEST
         } else {
-            let result = await FilmePlataformaDAO.selectPlataformasByIdFilme(idFilme)
+            let result = await FilmeIdiomaDAO.selectIdiomasByIdFilme(idFilme)
 
             if (result && result.length > 0) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
-                message.DEFAULT_MESSAGE.response.filme_plataforma = result
+                message.DEFAULT_MESSAGE.response.filme_idioma = result
 
                 return message.DEFAULT_MESSAGE // 200
             } else {
@@ -110,25 +112,25 @@ const buscarPlataformaIdFilme = async function (idFilme) {
     }
 }
 
-const atualizarFilmePlataforma = async function (filmePlataforma, id) {
+const atualizarFilmeIdioma = async function (filmeIdioma, id) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let resultID = await buscarFilmePlataforma(id)
+        let resultID = await buscarFilmeIdioma(id)
 
         if (resultID.status) {
-            let validar = await validarDados(filmePlataforma)
+            let validar = await validarDados(filmeIdioma)
 
             if (!validar) {
-                filmePlataforma.id = id
+                filmeIdioma.id = id
 
-                let result = await FilmePlataformaDAO.updateFilmePlataforma(filmePlataforma)
+                let result = await FilmeIdiomaDAO.updateFilmeIdioma(filmeIdioma)
 
                 if (result) {
                     message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDETED_ITEM.status
                     message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDETED_ITEM.status_code
                     message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDETED_ITEM.message
-                    message.DEFAULT_MESSAGE.response = filmePlataforma
+                    message.DEFAULT_MESSAGE.response = filmeIdioma
                     return message.DEFAULT_MESSAGE // 200 (Atualizado)
                 } else {
                     return message.ERROR_INTERNAL_SEVER_MODEL // 500 (Model)
@@ -145,32 +147,32 @@ const atualizarFilmePlataforma = async function (filmePlataforma, id) {
     }
 }
 
-const validarDados = async function (filmePlataforma) {
+const validarDados = async function (filmeIdioma) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
-    if (filmePlataforma.id_filme == undefined || filmePlataforma.id_filme == null || filmePlataforma.id_filme == '' || isNaN(filmePlataforma.id_filme)) {
+    if (filmeIdioma.id_filme == undefined || filmeIdioma.id_filme == null || filmeIdioma.id_filme == '' || isNaN(filmeIdioma.id_filme)) {
         message.ERROR_BAD_REQUEST.field = '[ID_FILME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST
-    } else if (filmePlataforma.id_plataformas == undefined || filmePlataforma.id_plataformas == null || filmePlataforma.id_plataformas == '' || isNaN(filmePlataforma.id_plataformas)) {
-        message.ERROR_BAD_REQUEST.field = '[ID_PLATAFORMAS] INVÁLIDO'
+    } else if (filmeIdioma.id_idioma == undefined || filmeIdioma.id_idioma == null || filmeIdioma.id_idioma == '' || isNaN(filmeIdioma.id_idioma)) {
+        message.ERROR_BAD_REQUEST.field = '[ID_IDIOMA] INVÁLIDO'
         return message.ERROR_BAD_REQUEST
     } else {
         return false
     }
 }
 
-const listarFilmePlataforma = async function () {
+const listarFilmeIdioma = async function () {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let result = await FilmePlataformaDAO.selectAllFilmePlataforma()
+        let result = await FilmeIdiomaDAO.selectAllFilmeIdioma()
 
         if (result) {
             if (result.length > 0) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_RESPONSE.status_code
                 message.DEFAULT_MESSAGE.response.count = result.length
-                message.DEFAULT_MESSAGE.response.filmePlataforma = result
+                message.DEFAULT_MESSAGE.response.filmeIdioma = result
 
                 return message.DEFAULT_MESSAGE // 200
             } else {
@@ -184,14 +186,14 @@ const listarFilmePlataforma = async function () {
     }
 }
 
-const excluirFilmePlataforma = async function (id) {
+const excluirFilmeIdioma = async function (id) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let resultBuscarID = await buscarFilmePlataforma(id)
+        let resultBuscarID = await buscarFilmeIdioma(id)
 
         if (resultBuscarID.status) {
-            let result = await FilmePlataformaDAO.deletePlataformaFilmes(id)
+            let result = await FilmeIdiomaDAO.deleteFilmeIdioma(id)
 
             if (result) {
                 return message.SUCCESS_DELETED_ITEM // 200 (Registro excluído)
@@ -207,12 +209,11 @@ const excluirFilmePlataforma = async function (id) {
     }
 }
 
-// Função para excluir as plataformas relacionadas com o filme
-const excluirPlataformasIdFilme = async function (idFilme) {
+const excluirIdiomasIdFilme = async function (idFilme) {
     let message = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let result = await FilmePlataformaDAO.deletePlataformasByIDFilme(idFilme)
+        let result = await FilmeIdiomaDAO.deleteIdiomaByIdFilme(idFilme)
 
         if (result) {
             return message.SUCCESS_DELETED_ITEM // 200 (Registro excluído)
@@ -226,13 +227,13 @@ const excluirPlataformasIdFilme = async function (idFilme) {
 }
 
 module.exports = {
-    inserirNovoFilmePlataforma,
-    buscarFilmePlataforma,
-    atualizarFilmePlataforma,
-    listarFilmePlataforma,
-    excluirFilmePlataforma,
+    inserirNovoFilmeIdioma,
+    buscarFilmeIdioma,
+    atualizarFilmeIdioma,
+    listarFilmeIdioma,
+    excluirFilmeIdioma,
 
-    buscarFilmeIdPlataforma,
-    buscarPlataformaIdFilme,
-    excluirPlataformasIdFilme
+    buscarFilmeIdIdioma,
+    buscarIdiomaIdFilme,
+    excluirIdiomasIdFilme
 }

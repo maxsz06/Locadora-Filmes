@@ -10,15 +10,15 @@ const knexConfig = require ('../../database_config_knex/knexFile.js')
 const knexConex = knex(knexConfig.development)
 
 
-const insertFilmePlataforma = async function (filmePlataforma) {
+const insertFilmeIdioma = async function (filmeIdioma) {
     try {
         let sql = `
-       INSERT INTO tbl_plataformas_filme(
+       INSERT INTO tbl_filme_idioma(
           id_filme,
-          id_plataformas)
+          id_idioma)
         VALUES(
-            ${filmePlataforma.id_filme},
-            ${filmePlataforma.id_plataformas})`
+            ${filmeIdioma.id_filme},
+            ${filmeIdioma.id_idioma})`
 
         let result = await knexConex.raw(sql)
 
@@ -33,13 +33,13 @@ const insertFilmePlataforma = async function (filmePlataforma) {
     }
 }
 
-const updateFilmePlataforma = async function (filmePlataforma) {
+const updateFilmeIdioma = async function (filmeIdioma) {
     try {
-        let sql = `UPDATE tbl_plataformas_filme SET
-                   id_filme = ${filmePlataforma.id_filme},
-                   id_plataformas = ${filmePlataforma.id_plataformas}
+        let sql = `UPDATE tbl_filme_idioma SET
+                   id_filme = ${filmeIdioma.id_filme},
+                   id_idioma = ${filmeIdioma.id_idioma}
 
-                   WHERE id = ${filmePlataforma.id}`
+                   WHERE id = ${filmeIdioma.id}`
 
         let result = await knexConex.raw(sql)
 
@@ -54,9 +54,9 @@ const updateFilmePlataforma = async function (filmePlataforma) {
     }
 }
 
-const selectByIdFilmePlataforma = async function (id) {
+const selectByIdFilmeIdioma = async function (id) {
     try {
-        let sql = `SELECT * FROM tbl_plataformas_filme WHERE id = ${id};`
+        let sql = `SELECT * FROM tbl_filme_idioma WHERE id = ${id};`
         let result = await knexConex.raw(sql)
 
         if (Array.isArray(result)) {
@@ -70,9 +70,9 @@ const selectByIdFilmePlataforma = async function (id) {
     }
 }
 
-const selectAllFilmePlataforma = async function () {
+const selectAllFilmeIdioma = async function () {
     try {
-        let sql = `SELECT * FROM tbl_plataformas_filme ORDER BY id DESC;`
+        let sql = `SELECT * FROM tbl_filme_idioma ORDER BY id DESC;`
         let result = await knexConex.raw(sql)
 
         if (Array.isArray(result)) {
@@ -87,15 +87,15 @@ const selectAllFilmePlataforma = async function () {
 }
 
 // Função para retornar os dados dos filmes filtrando pelo id do genero
-const selectFilmesByIdPlataforma = async function (idPlataforma) {
+const selectIdiomasByIdFilme = async function (idIdioma) {
     try {
-        let sql = `SELECT tbl_filme.*
-            FROM tbl_filme
-             INNER JOIN tbl_plataformas_filme
-                    ON tbl_filme.id = tbl_plataformas_filme.id_filme
-                INNER JOIN tbl_plataformas
-                    ON tbl_plataformas.id = tbl_plataformas_filme.id_plataformas
-            WHERE tbl_plataformas.id = ${idPlataforma}` 
+        let sql = `SELECT tbl_idioma.*
+    FROM tbl_idioma
+        INNER JOIN tbl_filme_idioma
+            ON tbl_idioma.id = tbl_filme_idioma.id_idioma
+        INNER JOIN tbl_filme
+            ON tbl_filme.id = tbl_filme_idioma.id_filme
+    WHERE tbl_filme.id = ${idIdioma}` 
         let result = await knexConex.raw(sql)
 
         if (Array.isArray(result)) {
@@ -110,17 +110,16 @@ const selectFilmesByIdPlataforma = async function (idPlataforma) {
 }
 
 // Função para retornar os dados dos generos filtrando pelo id do filme
-const selectPlataformasByIdFilme = async function (idFilme) {
+const selectPlataformasByIdIdioma = async function (idIdioma) {
     try {
-        let sql = `SELECT tbl_plataformas.*
-               FROM tbl_plataformas
-                   INNER JOIN tbl_plataformas_filme
-                       ON tbl_plataformas.id = tbl_plataformas_filme.id_plataformas
-                   INNER JOIN tbl_filme
-                       ON tbl_filme.id = tbl_plataformas_filme.id_filme
-               WHERE tbl_filme.id = ${idFilme}` 
+        let sql = `SELECT tbl_idioma.*
+          FROM tbl_idioma
+             INNER JOIN tbl_filme_idioma
+                 ON tbl_idioma.id = tbl_filme_idioma.id_idioma
+             INNER JOIN tbl_filme
+                   ON tbl_filme.id = tbl_filme_idioma.id_filme
+             WHERE tbl_filme.id = ${idIdioma}`   
            
-
         let result = await knexConex.raw(sql)
 
         if (Array.isArray(result)) {
@@ -134,9 +133,9 @@ const selectPlataformasByIdFilme = async function (idFilme) {
     }
 }
 
-const deletePlataformaFilmes = async function (id) {
+const deleteFilmeIdioma = async function (id) {
     try {
-        let sql = `DELETE FROM tbl_plataformas_filme WHERE id = ${id};`
+        let sql = `DELETE FROM tbl_filme_idioma WHERE id = ${id};`
         let result = await knexConex.raw(sql)
 
         if (result) {
@@ -153,9 +152,9 @@ const deletePlataformaFilmes = async function (id) {
 // Função para excluir os generos filrando pelo ID do filme
 //Essa função será utilizada no Update do filme, pois precisa apagar todos os generos
 //relacionados com o filme para inserir novas relações
-const deletePlataformasByIDFilme = async function (idPlataforma) { 
+const deleteIdiomaByIdFilme = async function (idFilme) { 
     try {
-        let sql = `DELETE FROM tbl_plataformas_filme WHERE id_filme= ${idPlataforma};`
+        let sql = `DELETE FROM tbl_filme_idioma WHERE id_filme= ${idFilme};`
         let result = await knexConex.raw(sql)
 
         if (result) {
@@ -169,13 +168,14 @@ const deletePlataformasByIDFilme = async function (idPlataforma) {
     
     }
 }
+
 module.exports = {
-    insertFilmePlataforma,
-    updateFilmePlataforma,
-    selectByIdFilmePlataforma,
-    selectAllFilmePlataforma,
-    deletePlataformaFilmes,
-    selectFilmesByIdPlataforma,
-    selectPlataformasByIdFilme,
-    deletePlataformasByIDFilme
+ insertFilmeIdioma,
+ updateFilmeIdioma,
+ selectByIdFilmeIdioma,
+ selectAllFilmeIdioma,
+ selectIdiomasByIdFilme,
+ selectPlataformasByIdIdioma,
+ deleteFilmeIdioma,
+ deleteIdiomaByIdFilme
 }

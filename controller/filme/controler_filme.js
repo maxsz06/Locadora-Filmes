@@ -8,12 +8,10 @@
 
 const config_message = require("../modulo/configMessages.js"); // import do arquivo de predonizção de mensagens
 const filmeDAO = require("../../model/DAO/filme/filme.js"); // Import do arquivo DAO para fazer o DAO  do filme no banco de dados
-
 const controler_classificacao = require('../classificacao/controler_classificacao.js') // Import de arquivos de Controler
 const controler_filme_genero = require('./controler_filme_genero.js') // IMPORT - FILME - PLATAFORMAS
-
-const controler_plataformas = require('../plataforma/controles_plataformas.js')
 const controler_filme_plataformas = require('./controler_filme_plataformas.js')
+const controler_idioma_filme = require('./controler_filme_idioma.js')
 
 //Fução para inserir um novo filme
 const inserirNovoFilme = async function (filme, contentType) {
@@ -58,6 +56,19 @@ const inserirNovoFilme = async function (filme, contentType) {
           if(!resultInsertPlataformas.status){
             return message.SUCCESS_CREATED_WARNING // 201 com alerta de dados não inseridos 
           }        
+        }
+
+        for(idioma of filme.idioma){
+          let idiomaFilme = {
+            "id_filme": filme.id,
+            "id_idioma": idioma.id
+                            }
+
+          let resultInsertIdioma = await controler_idioma_filme.inserirNovoFilmeIdioma(idiomaFilme)
+          if(!resultInsertIdioma.status){
+            return message.SUCCESS_CREATED_WARNING
+          }  
+
         }
 
           message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status;
@@ -176,8 +187,12 @@ const listarFilme = async function () {
 
           let resultPlataformas = await controler_filme_plataformas.buscarPlataformaIdFilme(filme.id)
           if(resultPlataformas.status){
-            filme.plataformas = resultPlataformas.response.filme_plataformas
+            filme.plataformas = resultPlataformas.response.filme_plataforma
           }
+          let resultIdiomas = await controler_idioma_filme.buscarIdiomaIdFilme(filme.id)
+            if(resultIdiomas.status){
+            filme.idioma = resultIdiomas.response.filme_idioma
+         }
         }
 
 
@@ -230,7 +245,13 @@ const buscarFilme = async function (id) {
                 // Result Plataforma
                 let resultPlataformas = await controler_filme_plataformas.buscarPlataformaIdFilme(filme.id)
                 if(resultPlataformas.status){
-                    filme.plataformas = resultPlataformas.response.filme_plataformas
+                  filme.plataformas = resultPlataformas.response.filme_plataforma
+                }
+                //Result Idioma
+  
+                let resultIdiomas = await controler_idioma_filme.buscarIdiomaIdFilme(filme.id)
+                if(resultIdiomas.status){
+                    filme.idioma = resultIdiomas.response.filme_idioma
                 }
               }
 // --------------------------------------------------------------------------------------              
